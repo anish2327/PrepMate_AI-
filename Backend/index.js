@@ -17,7 +17,7 @@ const app = express()
 
 app.use(express.json());
 app.use(cors({
-    origin : "https://prep-mate-ai-4165.vercel.app/",
+    origin : "https://prep-mate-ai-4165.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 })) 
