@@ -94,7 +94,7 @@ export async function loginUser(req, res) {
 
         const cookiesOption = {
         httpOnly: true,
-        secure: false, // for local dev
+        secure: true, // for local dev
         sameSite: "Lax",
         };
 
