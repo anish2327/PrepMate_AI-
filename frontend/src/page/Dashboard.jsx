@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import LogoutButton from "../component/logout";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -9,6 +10,8 @@ const Dashboard = () => {
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [difficulty, setDifficulty] = useState("");
+   const [resume, setResume] = useState(null);
+  const [loading, setLoading] = useState(false);
  
 
   const handleStartInterview = async () => {
@@ -17,31 +20,44 @@ const Dashboard = () => {
       alert("Please select role, experience, and difficulty");
       return;
     }
+     const formData = new FormData();
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/interview/start`,
-      {
-        role,
-        experience,
-        difficulty,
+      formData.append("role", role);
+      formData.append("experience", experience);
+      formData.append("difficulty", difficulty);
+
+      // Resume is optional
+      if (resume) {
+        formData.append("resume", resume);
       }
-    );
 
-    navigate("/interview", {
-      state: {
-        role,
-        experience,
-        difficulty,
-        questions: response.data.questions,
-      },
-    });
+      setLoading(true);
 
-  } catch (error) {
-    console.log(error);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/interview/start`,
+        formData
+      );
 
-    alert("Failed to generate interview questions");
-  }
-};
+      navigate("/interview", {
+        state: {
+          role,
+          experience,
+          difficulty,
+          questions: response.data.questions,
+          resumeBased: response.data.resumeBased,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to generate interview questions"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const roles = [
     "Frontend Developer",
@@ -56,6 +72,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-10">
+
+      <div className="max-w-4xl mx-auto flex justify-end mb-4">
+      <LogoutButton />
+     </div>
+
       
       <h1 className="text-4xl font-bold text-center mb-3">
         Welcome 👋
@@ -122,12 +143,45 @@ const Dashboard = () => {
         </select>
       </div>
 
+      
+     
+            {/* resume section */}
+            
+        <div className="mt-10">
+          <h2 className="text-2xl font-semibold mb-2">
+            Upload Resume
+          </h2>
+
+          <p className="text-gray-400 mb-4">
+            Optional — Upload your resume to get personalized
+            interview questions based on your skills and projects.
+          </p>
+
+          <input
+            type="file"
+            accept=".pdf,application/pdf"
+            onChange={(e) => setResume(e.target.files[0])}
+            className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700"
+          />
+
+          {resume && (
+            <p className="text-purple-400 mt-3">
+              Selected: {resume.name}
+            </p>
+          )}
+        </div>
+
+
         <button
           onClick={handleStartInterview}
-          className="w-full mt-8 bg-purple-600 hover:bg-purple-700 py-4 rounded-lg font-semibold"
+          disabled={loading}
+          className="w-full mt-8 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-900 py-4 rounded-lg font-semibold"
         >
-          Start Interview
+          {loading
+            ? "Generating Questions..."
+            : "Start Interview"}
         </button>
+
       </div>
     </div>
   );

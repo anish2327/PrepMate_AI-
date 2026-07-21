@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LogoutButton from "../component/logout";
 
 const Interview = () => {
   const navigate = useNavigate();
@@ -39,14 +40,12 @@ const Interview = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/interview/evaluate",
+        `${import.meta.env.VITE_API_URL}/interview/evaluate`,
         {
-        
-        role,
-        experience,
-        difficulty,
-        answers: updatedAnswers,
-      
+          role,
+          experience,
+          difficulty,
+          answers: updatedAnswers,
         }
       );
       console.log(response.data);
@@ -67,6 +66,9 @@ const Interview = () => {
   return (
     <div className="min-h-screen bg-black text-white px-6 py-10">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-end mb-4">
+        <LogoutButton />
+        </div>
 
         <h1 className="text-4xl font-bold text-center mb-3">
           AI Interview Test

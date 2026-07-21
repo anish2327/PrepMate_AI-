@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import LogoutButton from "../component/logout";
 
 
 const Result = () => {
@@ -24,6 +25,10 @@ const {
   return (
     <div className="min-h-screen bg-black text-white px-6 py-10">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-end mb-4">
+        <LogoutButton />
+      </div>
+
 
         <h1 className="text-4xl font-bold text-center mb-4">
           Interview Result
