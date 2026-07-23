@@ -117,6 +117,13 @@ const Login = () => {
         );
         return;
       }
+      const payload = JSON.parse(
+        atob(credentialResponse.credential.split(".")[1])
+      );
+
+      console.log("Frontend Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+      console.log("Token Audience:", payload.aud);
+      console.log("Token Issuer:", payload.iss);
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/google-login`,{

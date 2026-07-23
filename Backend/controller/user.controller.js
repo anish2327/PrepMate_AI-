@@ -90,6 +90,7 @@ export async function registerUser(req, res) {
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID
 );
+console.log("Backend Client ID:", process.env.GOOGLE_CLIENT_ID);
 
 export async function googleLoginController(
   req,
@@ -105,6 +106,14 @@ export async function googleLoginController(
         success: false,
       });
     }
+    console.log("Expected Client ID:", process.env.GOOGLE_CLIENT_ID);
+
+  const decoded = JSON.parse(
+    Buffer.from(token.split(".")[1], "base64").toString()
+  );
+
+  console.log("Token Audience:", decoded.aud);
+  console.log("Token Issuer:", decoded.iss);
 
     // Verify Google token
     const ticket =

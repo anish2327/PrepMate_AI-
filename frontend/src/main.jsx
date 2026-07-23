@@ -13,10 +13,12 @@ const root = ReactDOM.createRoot(
   document.getElementById("root")
 );
 
+console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
 root.render(
   <StrictMode>
     <GoogleOAuthProvider
       clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+      
     >
       <Provider store={store}>
         <BrowserRouter>

@@ -17,10 +17,19 @@ export const generateQuestions = async (req, res) => {
       role,
       experience,
       difficulty,
+      numberOfQuestions,
     } = req.body;
 
     let resumeContext = "";
     let resumeBased = false;
+    const count = Number(numberOfQuestions);
+
+  if (![5, 10, 15, 20,25].includes(count)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid question count",
+  });
+}
 
     // =====================================
     // STEP 1: PROCESS RESUME
@@ -79,13 +88,20 @@ export const generateQuestions = async (req, res) => {
     const prompt = `
 You are a professional technical interviewer.
 
-Generate exactly 10 interview questions.
+Generate exactly ${count} interview questions.
 
 Candidate Information:
 
 Role: ${role}
 Experience: ${experience}
 Difficulty: ${difficulty}
+
+special instructions for generating questions based on DSA role:
+- If the role is DSA, focus on data structures and algorithms.
+- Ask questions based on common DSA problems from platforms like LeetCode, HackerRank, and GeeksforGeeks.
+- Ask questions that test problem-solving skills, algorithmic thinking, and coding ability.
+-Half no of question should be based on codinh skills and half should be based on thoery and algorithms concepts.
+
 
 ${
   resumeBased
@@ -103,6 +119,7 @@ ${resumeContext}
 Generate personalized interview questions primarily based on the candidate's resume.
 
 Focus on:
+Asked relevant questions based on the candidate's projects, technical skills, and experience mentioned in the resume.
 
 1. Projects mentioned in the resume
 2. Technical skills mentioned in the resume
@@ -111,12 +128,15 @@ Focus on:
 5. Implementation decisions
 6. Challenges faced in projects
 7. Architecture and design decisions
+8. Question based on previous year of interviewquestion in company about skills and projects mentioned in resume.
+9. Asked about the candidate's understanding of the technologies and tools used in their projects.
+10. Asked question on work experience and role mentioned in resume.
 
 The purpose is to verify whether the candidate genuinely understands the projects and technologies listed in their resume.
 
 IMPORTANT RULES:
 
-- At least 7 out of 10 questions MUST be directly related to the candidate's resume.
+- At least 70 percent of the questions MUST be directly related to the candidate's resume.
 - Focus strongly on Projects and Technical Skills.
 - Mention project names in questions when appropriate.
 - Ask implementation-based questions.
@@ -158,6 +178,7 @@ Experience: ${experience}
 Difficulty: ${difficulty}
 
 Focus on concepts and practical knowledge relevant to the selected role.
+like His selected role is DSA then asked question based on DSA problem from the famous leetcode  question those asked in the previous year of interview question in the company.
 `
 }
 
@@ -167,6 +188,8 @@ Easy:
 - Fundamentals
 - Basic concepts
 - Simple project explanations
+- basic coding questions
+- basic DSA problems
 
 Medium:
 - Implementation details
@@ -181,12 +204,12 @@ Hard:
 - Performance
 - Advanced implementation
 - Real-world scenarios
+- backend and frontend integration
 
 OUTPUT RULES:
 
-Return ONLY a valid JSON array.
+Return ONLY a valid JSON array containing exactly ${count} strings.
 
-The array MUST contain exactly 10 strings.
 
 Do not include markdown.
 
@@ -207,6 +230,21 @@ Correct format:
   "Question 8",
   "Question 9",
   "Question 10"
+  "Question 11",
+  "Question 12",
+  "Question 13",
+  "Question 14",
+  "Question 15",
+  "Question 16",
+  "Question 17",
+  "Question 18",
+  "Question 19",
+  "Question 20",
+  "Question 21",
+  "Question 22",
+  "Question 23",
+  "Question 24",
+  "Question 25",
 ]
 `;
 
@@ -247,11 +285,11 @@ Correct format:
       );
     }
 
-    if (questions.length !== 10) {
-      throw new Error(
-        `Gemini returned ${questions.length} questions instead of 10`
-      );
-    }
+    if (!Array.isArray(questions) || questions.length === 0) {
+  throw new Error(
+    "Gemini did not return valid interview questions"
+  );
+}
 
     // =====================================
     // STEP 6: SEND RESPONSE
@@ -263,6 +301,8 @@ Correct format:
       experience,
       difficulty,
       resumeBased,
+      requestedQuestions: count,
+      generatedQuestions: questions.length,
       questions,
     });
 
@@ -326,6 +366,7 @@ export const evaluateInterview = async (req, res) => {
     You are a senior technical interviewer.
 
     Evaluate the following interview answers.
+    
 
     Role: ${role}
     Experience: ${experience}
@@ -337,6 +378,8 @@ export const evaluateInterview = async (req, res) => {
     - Completeness of Answer
     - Communication Skills
     - Problem Solving Ability
+    - Approach for DSA problems and coding questions
+
 
     Answers:
     ${answers

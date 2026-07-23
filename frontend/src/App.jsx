@@ -3,8 +3,7 @@ import {Route, Routes} from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Login from './page/login'
 import Signup from './page/signup'
-import Chat from './page/chat'
-import Home from './page/home'
+
 import Dashboard from './page/Dashboard'
 import Interview from './page/Interview'
 import Result from './page/Result'
@@ -20,9 +19,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Login/>}/>
         <Route path='/login' element={<Login/>}/>
-        <Route path='/home' element={<Home/>}/>
         <Route path='/signup' element={<Signup/>}/>
-        <Route path='/chat' element={<Chat/>} />
+       
         <Route path='/dashboard' element={<Dashboard/>} />
         <Route path='/interview' element={<Interview />} />
         <Route path='/result' element={<Result />} />
